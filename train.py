@@ -111,7 +111,7 @@ def verdict_for(res):
     return (f"{e['task'].upper()}: CUE-FREE CASCADE WORKS -- the silo is CALIBRATED (ECE "
             f"{e['silo_ece']:.2f}, conf-vs-correct AUC {e['silo_conf_auc']:.2f}: it is uncertain "
             f"exactly when it is wrong), so its confidence routes the hard regime to plain with NO "
-            f"cue. It closes {e['recovery_frac']*100:.0f}% of the silo->plain gap ({e['silo_only']['acc']:.2f}"
+            f"cue. It closes ~{e['recovery_frac']*100:.0f}% of the silo->plain gap ({e['silo_only']['acc']:.2f}"
             f"->{op['acc']:.2f}, plain {e['plain_only']['acc']:.2f}) at {op['pairs']} avg attention "
             f"pairs vs plain's {e['plain_only']['pairs']} -- {(1-op['pairs']/e['plain_only']['pairs'])*100:.0f}% "
             f"cheaper -- escalating {op['esc_ord']*100:.0f}% of order but {op['esc_bag']*100:.0f}% of bag.")
