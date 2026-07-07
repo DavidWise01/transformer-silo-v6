@@ -231,7 +231,8 @@ var RESULTS = {
       "chance":0.25, "silo":0.625, "plain":0.9233, "gap":0.2983, "recovery":0.995,
       "ece":0.0506, "auc":0.8979,
       "op":{"tau":0.45,"acc":0.9217,"pairs":45.3,"esc_ord":0.902,"esc_bag":0.0},
-      "curve":[[16.0,0.625],[16.4,0.632],[17.6,0.66],[19.9,0.70],[23.4,0.75],[28.1,0.80],[33.8,0.852],[39.6,0.893],[45.3,0.9217],[50.7,0.923],[55.9,0.923],[61.2,0.923],[66.5,0.9233],[71.8,0.9233],[77.1,0.9233],[80.0,0.9233]]
+      "peak":{"acc":0.945,"pairs":48.5},
+      "curve":[[16.0,0.625],[17.7,0.6383],[21.7,0.6833],[28.7,0.7583],[34.2,0.8183],[38.3,0.8567],[41.4,0.88],[44.2,0.9133],[45.3,0.9217],[46.2,0.9267],[47.4,0.935],[47.9,0.9383],[48.3,0.9433],[48.5,0.945],[48.7,0.945],[48.9,0.9433],[49.2,0.945],[49.4,0.9433],[49.7,0.94],[50.1,0.9367],[50.3,0.935],[51.0,0.9317],[80.0,0.9233]]
     },
     "entangled": {
       "label":"ENTANGLED", "kind":"regime hidden from content", "outcome":"noh",
@@ -239,12 +240,13 @@ var RESULTS = {
       "chance":0.25, "silo":0.6767, "plain":0.6883, "gap":0.0117, "recovery":0.286,
       "ece":0.1185, "auc":0.5874,
       "op":{"tau":0.35,"acc":0.68,"pairs":18.5,"esc_ord":0.033,"esc_bag":0.044},
-      "curve":[[16.0,0.677],[18.5,0.68],[22.0,0.679],[27.0,0.681],[33.0,0.683],[40.0,0.684],[48.0,0.686],[56.0,0.687],[64.0,0.688],[72.0,0.688],[80.0,0.6883]]
+      "peak":{"acc":0.7133,"pairs":43.4},
+      "curve":[[16.0,0.6767],[16.1,0.6783],[16.9,0.675],[18.5,0.68],[20.3,0.6833],[22.1,0.6883],[24.5,0.6733],[27.6,0.685],[30.3,0.6817],[34.5,0.6867],[38.3,0.6983],[40.5,0.7117],[43.4,0.7133],[46.4,0.7067],[49.1,0.705],[51.9,0.71],[54.1,0.71],[56.5,0.705],[58.5,0.705],[60.9,0.7017],[64.9,0.6967],[68.2,0.69],[72.0,0.6883],[76.6,0.6883],[80.0,0.6883]]
     }
   },
   "verdict":""
 };
-RESULTS.verdict = "Same confidence-gated cascade, two cue-free tasks, opposite outcomes — and the difference is CALIBRATION. TELEGRAPHED: the silo is calibrated (ECE 0.05, conf-vs-correct AUC 0.90 — unsure exactly when it's wrong), so its confidence routes the hard regime to plain with NO cue; it closes 100% of the silo→plain gap (0.62→0.92) at 45 vs 64 attention pairs (29% cheaper), escalating 90% of order but 0% of bag. ENTANGLED: plain 0.69 is barely above silo 0.68 — when the regime is illegible in the content, NEITHER expert can do the hard half cue-free, so the cascade has nothing better to escalate to, and the silo's confidence is near-blind anyway (ECE 0.12, AUC 0.59). The lesson: a confidence cascade doesn't detect the hard regime — it detects the cheap model's own UNCERTAINTY, which only helps when that lines up with its errors. This is the honest sequel to v5's catch: if the regime is detectable in the CONTENT you need neither a cue token nor a learned router — a confidence cascade suffices; if it isn't, nothing does. Constructed contrast, tiny models, synthetic — a demonstration of WHEN cascades work, not a benchmark.";
+RESULTS.verdict = "Same confidence-gated cascade, two cue-free tasks, opposite outcomes — and the difference is CALIBRATION. TELEGRAPHED: the silo is calibrated (ECE 0.05, conf-vs-correct AUC 0.90 — unsure exactly when it's wrong), so its confidence routes the hard regime to plain with NO cue; it closes 100% of the silo→plain gap (0.62→0.92) at 45 vs 64 attention pairs (29% cheaper), escalating 90% of order but 0% of bag. ENTANGLED: no real headroom — plain 0.69 is barely above silo 0.68 (gap 1%), so with the regime illegible there is no capability gap worth routing for, and the silo's confidence is near-blind (ECE 0.12, AUC 0.59); the cascade can eke a small ensemble bump (curve peaks ~0.71, a couple points over either pure expert) but only by escalating heavily (~43 pairs) — marginal and noisy, nothing like the telegraphed win. The lesson: a confidence cascade doesn't detect the hard regime — it detects the cheap model's own UNCERTAINTY, which only helps when that lines up with its errors. This is the honest sequel to v5's catch: if the regime is detectable in the CONTENT you need neither a cue token nor a learned router — a confidence cascade suffices; if it isn't, nothing does. Constructed contrast, tiny models, synthetic — a demonstration of WHEN cascades work, not a benchmark.";
 (function(){
 "use strict";
 var R = RESULTS, c = R.config, CH = 0.25;
@@ -268,11 +270,13 @@ function curveSVG(t){
   g+='<line x1="'+pad+'" y1="'+yp+'" x2="'+(W-8)+'" y2="'+yp+'" stroke="#5b6b78" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>';
   g+='<text x="'+(W-10)+'" y="'+(yp-3)+'" text-anchor="end" font-family="ui-monospace" font-size="8" fill="#3c4a55">plain '+pc(t.plain)+'%</text>';
   g+='<polyline points="'+poly+'" fill="none" stroke="'+col+'" stroke-width="2"/>';
-  // silo-only point (left) and operating point
+  // silo-only point (left), the operating point (matches plain), and the peak (hollow)
   g+='<circle cx="'+X(16).toFixed(1)+'" cy="'+Y(t.silo).toFixed(1)+'" r="3.2" fill="#1f8f66"/>';
   g+='<text x="'+(X(16)+5).toFixed(1)+'" y="'+(Y(t.silo)+11).toFixed(1)+'" font-family="ui-monospace" font-size="8" fill="#146b4b">silo</text>';
+  g+='<circle cx="'+X(t.peak.pairs).toFixed(1)+'" cy="'+Y(t.peak.acc).toFixed(1)+'" r="3.4" fill="none" stroke="'+col+'" stroke-width="1.3" opacity=".7"/>';
+  g+='<text x="'+X(t.peak.pairs).toFixed(1)+'" y="'+(Y(t.peak.acc)-6).toFixed(1)+'" text-anchor="middle" font-family="ui-monospace" font-size="7.5" fill="'+col+'" opacity=".85">peak '+pc(t.peak.acc)+'%</text>';
   g+='<circle cx="'+X(t.op.pairs).toFixed(1)+'" cy="'+Y(t.op.acc).toFixed(1)+'" r="4" fill="'+col+'" stroke="#fff" stroke-width="1.3"/>';
-  g+='<text x="'+X(t.op.pairs).toFixed(1)+'" y="'+(Y(t.op.acc)-7).toFixed(1)+'" text-anchor="middle" font-family="ui-monospace" font-size="8" font-weight="700" fill="'+col+'">'+t.op.pairs+'p</text>';
+  g+='<text x="'+X(t.op.pairs).toFixed(1)+'" y="'+(Y(t.op.acc)+13).toFixed(1)+'" text-anchor="middle" font-family="ui-monospace" font-size="8" font-weight="700" fill="'+col+'">op '+t.op.pairs+'p</text>';
   // axes labels
   g+='<text x="'+pad+'" y="'+(Hh-4)+'" font-family="ui-monospace" font-size="8" fill="#867458">16</text>';
   g+='<text x="'+(W-8)+'" y="'+(Hh-4)+'" text-anchor="end" font-family="ui-monospace" font-size="8" fill="#867458">80 pairs →</text>';
@@ -286,8 +290,8 @@ function card(key){
   var t=R.tasks[key], oc=t.outcome;
   var eceCls = t.ece < 0.08 ? "good":"bad", aucCls = t.auc > 0.8 ? "good":"bad";
   var sum = oc==="win"
-    ? 'the cue-free cascade closes <b>'+(t.recovery*100).toFixed(0)+'%</b> of the silo→plain gap ('+pc(t.silo)+'%→'+pc(t.op.acc)+'%) at <b>'+t.op.pairs+' pairs</b> vs plain’s '+c.plain_pairs+' — '+((1-t.op.pairs/c.plain_pairs)*100).toFixed(0)+'% cheaper. It escalates <b>'+(t.op.esc_ord*100).toFixed(0)+'% of order</b> but '+(t.op.esc_bag*100).toFixed(0)+'% of bag: the confidence found the hard regime, no cue.'
-    : 'plain ('+pc(t.plain)+'%) barely beats silo ('+pc(t.silo)+'%) — gap <b>'+(t.gap*100).toFixed(0)+'%</b>. With the regime hidden, neither expert can do the hard half cue-free, so there is <b>nothing better to escalate to</b>, and confidence is near-blind. The cascade correctly stays cheap but can’t manufacture accuracy.';
+    ? 'the cue-free cascade closes <b>'+(t.recovery*100).toFixed(1)+'%</b> of the silo→plain gap ('+pc(t.silo)+'%→'+pc(t.op.acc)+'%) at <b>'+t.op.pairs+' pairs</b> vs plain’s '+c.plain_pairs+' — '+((1-t.op.pairs/c.plain_pairs)*100).toFixed(0)+'% cheaper. It escalates <b>'+(t.op.esc_ord*100).toFixed(0)+'% of order</b> but '+(t.op.esc_bag*100).toFixed(0)+'% of bag: the confidence found the hard regime, no cue.'
+    : 'plain ('+pc(t.plain)+'%) barely beats silo ('+pc(t.silo)+'%) — gap <b>'+(t.gap*100).toFixed(0)+'%</b>: with the regime hidden, neither expert can do the hard half cue-free, so there is <b>no gap worth routing for</b>. The cascade can eke a small ensemble bump (curve peaks <b>'+pc(t.peak.acc)+'%</b>, a couple points over either pure expert) but only by escalating heavily (~'+t.peak.pairs+' pairs) — and with confidence near-blind (AUC '+t.auc.toFixed(2)+') that bump is marginal and noisy, nothing like the telegraphed win.';
   return '<div class="tcard '+oc+'"><div class="thd"><span class="nm">'+t.label+'</span>'+
     '<span style="font-family:var(--mono);font-size:10px;color:var(--dim)">'+t.kind+'</span>'+
     '<span class="badge '+oc+'">'+(oc==="win"?"cue-free win":"no headroom")+'</span></div>'+

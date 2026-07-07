@@ -46,10 +46,14 @@ The routing signal is the silo's confidence — nothing else.
   gap (0.625 → 0.922, plain 0.923) at **45.3 attention pairs vs plain's 64 —
   ~29% cheaper** — escalating **90% of order** examples but **0% of bag.** The
   confidence found the hard regime with no cue, because the silo was calibrated.
-- **entangled → no headroom.** Plain (0.688) barely beats silo (0.677): when the
-  regime is illegible, *neither* expert can do the hard half cue-free, so the
-  cascade has nothing better to escalate to — and confidence is near-blind anyway.
-  It correctly stays cheap but can't manufacture accuracy neither expert has.
+- **entangled → no real headroom.** Plain (0.688) barely beats silo (0.677): when
+  the regime is illegible, *neither* expert can do the hard half cue-free, so there
+  is no capability gap worth routing for — and confidence is near-blind (AUC 0.59).
+  The cascade *can* eke a small ensemble bump (its curve peaks ~**0.71**, a couple
+  points over either pure expert) but only by escalating heavily (~43 pairs), and
+  with confidence this weak that bump is marginal and noisy — nothing like the
+  telegraphed win. (The plot shows this: the entangled curve rises slightly, then
+  sags back toward plain — a weak ensemble, not a cheap routing win.)
 
 ## Is that good or bad?
 

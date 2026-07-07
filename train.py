@@ -83,11 +83,13 @@ def run_task(world, task, seed=0):
     recovery = None
     if op is not None and gap > 1e-6:
         recovery = round((op["acc"] - silo_acc) / gap, 3)   # fraction of the gap closed
+    peak = max(curve, key=lambda c: c["acc"])       # the cascade's best accuracy (ensemble peak)
     return {
         "task": task, "chance": round(ds["chance"], 4),
         "silo_only": {"acc": round(silo_acc, 4), "pairs": SILO_PAIRS},
         "plain_only": {"acc": round(plain_acc, 4), "pairs": PLAIN_PAIRS},
         "gap": round(gap, 4), "recovery_frac": recovery,
+        "peak": {"acc": peak["acc"], "pairs": peak["pairs"]},
         "silo_ece": round(ece, 4), "silo_conf_auc": round(auc, 4),
         "operating_point": op, "curve": curve,
     }
@@ -96,14 +98,16 @@ def run_task(world, task, seed=0):
 def verdict_for(res):
     e = res; op = e["operating_point"]
     if e["gap"] < 0.05:
-        # no headroom: the expensive expert is barely better, so nothing to route to
-        return (f"{e['task'].upper()}: NO HEADROOM -- plain {e['plain_only']['acc']:.2f} is barely "
+        # no meaningful headroom: the expensive expert is barely better than the cheap one
+        return (f"{e['task'].upper()}: NO REAL HEADROOM -- plain {e['plain_only']['acc']:.2f} is barely "
                 f"above silo {e['silo_only']['acc']:.2f} (gap {e['gap']*100:.0f}%). When the regime "
-                f"is illegible in the content, NEITHER expert can do the hard half cue-free, so a "
-                f"cascade has nothing better to escalate to -- and the silo's confidence is weak "
-                f"anyway (ECE {e['silo_ece']:.2f}, conf-vs-correct AUC {e['silo_conf_auc']:.2f}). "
-                f"The cascade correctly stays cheap (~{op['pairs'] if op else SILO_PAIRS} pairs) but "
-                f"cannot manufacture accuracy neither expert has.")
+                f"is illegible in the content, NEITHER expert can do the hard half cue-free, so there "
+                f"is no capability gap worth routing for -- and the silo's confidence is near-blind "
+                f"(ECE {e['silo_ece']:.2f}, conf-vs-correct AUC {e['silo_conf_auc']:.2f}). The cascade "
+                f"can eke a small ensemble bump (peak {e['peak']['acc']:.2f}, ~{(e['peak']['acc']-max(e['silo_only']['acc'],e['plain_only']['acc']))*100:.0f} "
+                f"pts over the better pure expert) but only by escalating heavily (~{e['peak']['pairs']} "
+                f"pairs), and with confidence this weak that bump is marginal and noisy -- nothing "
+                f"like the telegraphed win.")
     return (f"{e['task'].upper()}: CUE-FREE CASCADE WORKS -- the silo is CALIBRATED (ECE "
             f"{e['silo_ece']:.2f}, conf-vs-correct AUC {e['silo_conf_auc']:.2f}: it is uncertain "
             f"exactly when it is wrong), so its confidence routes the hard regime to plain with NO "
