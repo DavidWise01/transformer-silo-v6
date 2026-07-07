@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRANSFORMER SILO v6 · the cascade &amp; the confidence trap · ROOT0</title>
+<meta name="description" content="transformer-silo v6 by David Lee Wise / ROOT0: a CUE-FREE confidence-gated cascade — run the cheap silo first, escalate to the plain expert only when the silo is unsure. v5 needed a regime cue to route; v6 asks whether the silo's own confidence can route instead. Answer: only when the silo is CALIBRATED. Tested on two tasks. TELEGRAPHED (regime legible in content): silo calibrated (ECE 0.05, conf-AUC 0.90), the cascade closes 100% of the silo→plain gap (0.62→0.92) at 45 vs 64 attention pairs — cue-free routing, 29% cheaper. ENTANGLED (regime hidden): silo confidently wrong (ECE 0.12, AUC 0.59), plain barely beats silo — no headroom, nothing to route to. The lesson: a confidence cascade detects the cheap model's own uncertainty, which only helps when it lines up with its errors.">
+<meta name="theme-color" content="#b85c1f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TRANSFORMER SILO v6 · the cascade &amp; the confidence trap">
+<meta property="og:description" content="A cue-free confidence cascade: cheap silo first, escalate when unsure. It works ONLY when the silo is calibrated. Telegraphed task: closes 100% of the silo→plain gap at 29% less compute, no cue. Entangled task: silo confidently wrong, plain barely beats it — nothing to route to. Confidence ≠ competence; calibration decides.">
+<meta property="og:url" content="https://davidwise01.github.io/transformer-silo-v6/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TRANSFORMER SILO v6 · the cascade &amp; the confidence trap">
+<meta name="twitter:description" content="Cheap silo first, escalate when unsure — cue-free. Works only when the silo is calibrated: telegraphed closes 100% of the gap at 29% less compute; entangled is blind (confidently wrong). Calibration decides.">
+<link rel="canonical" href="https://davidwise01.github.io/transformer-silo-v6/">
+<style>
+:root{
+  --paper:#f3ece3; --pan:#faf5ee; --pan2:#f1e7da;
+  --ink:#2a2118; --ink2:#4d3f30; --dim:#867458;
+  --amber:#b85c1f; --amber2:#8a4315;
+  --silo:#1f8f66; --silo2:#146b4b;
+  --plain:#5b6b78; --plain2:#3c4a55;
+  --ok:#1f8f66; --ok2:#146b4b;
+  --no:#a8503c; --no2:#7d3826;
+  --gold:#c99128; --gold2:#9a6d18;
+  --signal:#bf4638; --signal2:#8f3025;
+  --line:#e2d6c5; --line2:#ede3d5;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,"SFMono-Regular","Cascadia Code","Consolas",monospace;
+  --shadow:0 1px 0 #fffc, 0 16px 34px -24px #2a211844;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  background-image:repeating-linear-gradient(0deg,#0000 0 33px,#b85c1f0c 33px 34px)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+a{color:var(--amber2);text-underline-offset:2px}
+h1,h2,h3{line-height:1.13;font-weight:600;letter-spacing:.2px}
+.mono{font-family:var(--mono)}
+
+header.top{padding:38px 0 12px}
+.sealrow{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.seal{width:112px;height:112px;flex:none;filter:drop-shadow(0 8px 18px -10px #2a211855)}
+.kick{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber2)}
+h1.mh{font-size:clamp(28px,5.4vw,48px);margin:.08em 0 .12em;letter-spacing:.5px}
+.lede{font-size:18px;color:var(--ink2);max-width:66ch;margin:.35em 0 0}
+.lede b{color:var(--ink);font-weight:600}
+.lede code{font-family:var(--mono);font-size:15px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--amber2)}
+
+section{padding:26px 0 4px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold2)}
+h2.sec{font-size:clamp(22px,3.6vw,29px);margin:.14em 0 .18em}
+.sub{color:var(--ink2);max-width:76ch;margin:0 0 16px}
+
+.route-wrap{border:1px solid var(--line);border-radius:12px;background:#fff;padding:6px 6px 2px;margin-bottom:12px}
+.route-wrap svg{width:100%;height:auto;display:block}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+.tcard{border:1px solid var(--line);border-radius:14px;background:var(--pan);box-shadow:var(--shadow);overflow:hidden}
+.tcard.win{border-color:color-mix(in srgb,var(--ok) 42%,#fff)}
+.tcard.noh{border-color:color-mix(in srgb,var(--no) 38%,#fff)}
+.thd{padding:12px 15px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.thd .nm{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.04em}
+.tcard.win .nm{color:var(--ok2)} .tcard.noh .nm{color:var(--no2)}
+.badge{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-left:auto}
+.badge.win{background:color-mix(in srgb,var(--ok) 16%,#fff);color:var(--ok2)}
+.badge.noh{background:color-mix(in srgb,var(--no) 14%,#fff);color:var(--no2)}
+.tdesc{padding:9px 15px 2px;font-size:13.5px;color:var(--ink2)}
+.tbody{padding:10px 15px 15px}
+.arms{display:grid;gap:8px;margin:8px 0 4px}
+.arm{display:grid;grid-template-columns:96px 1fr 84px;gap:9px;align-items:center;font-family:var(--mono);font-size:11.5px}
+.arm .lab{font-weight:700}
+.arm.silo .lab{color:var(--silo2)} .arm.plain .lab{color:var(--plain2)} .arm.casc .lab{color:var(--amber2)}
+.arm .tr{position:relative;height:17px;background:#efe7db;border-radius:5px;overflow:hidden}
+.arm .fl{position:absolute;top:0;bottom:0;left:0;border-radius:5px}
+.arm.silo .fl{background:var(--silo)} .arm.plain .fl{background:var(--plain)} .arm.casc .fl{background:var(--amber)}
+.arm .chance{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--signal);opacity:.7}
+.arm .v{text-align:right;font-weight:700}
+.arm .v .u{color:var(--dim);font-weight:400;font-size:9.5px}
+.curve{margin:10px 0 4px}
+.curve svg{width:100%;height:118px;display:block;border:1px solid var(--line);border-radius:8px;background:#fdfaf5}
+.diag{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.chip{border:1px solid var(--line);border-radius:9px;background:#fff;padding:7px 10px;font-family:var(--mono);font-size:11px}
+.chip .k{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.chip .val{font-weight:700;font-size:14px;color:var(--ink)}
+.chip.good .val{color:var(--ok2)} .chip.bad .val{color:var(--no2)}
+.chip .note{color:var(--dim);font-size:10px}
+.tsum{padding:11px 15px;font-family:var(--mono);font-size:11.5px;line-height:1.5;border-top:1px solid var(--line2);background:var(--pan2)}
+.tcard.win .tsum b{color:var(--ok2)} .tcard.noh .tsum b{color:var(--no2)}
+
+.verdict{font-family:var(--mono);font-size:13px;line-height:1.55;border-radius:9px;padding:12px 14px;margin:16px 0 4px;border:1px solid color-mix(in srgb,var(--amber) 30%,#fff);background:color-mix(in srgb,var(--amber) 8%,#fff);color:var(--amber2)}
+
+.card{border:1px solid var(--line);border-radius:12px;background:var(--pan);padding:16px 18px;box-shadow:var(--shadow)}
+.card h3{font-size:14px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber2);margin:0 0 8px}
+.card.sig h3{color:var(--signal2)}
+.card p{margin:.35em 0;font-size:14.5px;color:var(--ink2)}
+.card code{font-family:var(--mono);font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.src{font-family:var(--mono);font-size:11.5px;color:var(--dim);margin-top:14px;line-height:1.75}
+.backbar{margin:28px 0 0;padding:15px 0;border-top:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12.5px}
+.backbar a{text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:var(--pan)}
+.backbar a:hover{border-color:var(--amber)}
+footer{padding:26px 0 60px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="sealrow">
+    <svg class="seal" viewBox="0 0 120 120" role="img" aria-label="Silo v6 cascade insignia">
+      <circle cx="60" cy="60" r="56" fill="none" stroke="#b85c1f" stroke-width="2.4"/>
+      <circle cx="60" cy="30" r="5" fill="#b85c1f"/>
+      <path d="M60 36 L60 52" stroke="#b85c1f" stroke-width="1.8"/>
+      <!-- confidence gate diamond -->
+      <path d="M60 52 L72 63 L60 74 L48 63 Z" fill="none" stroke="#b85c1f" stroke-width="1.7"/>
+      <text x="60" y="66" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6.5" fill="#8a4315">τ?</text>
+      <!-- sure -> keep (down, cheap) -->
+      <path d="M60 74 L60 92" stroke="#1f8f66" stroke-width="1.7"/>
+      <circle cx="60" cy="96" r="5" fill="none" stroke="#146b4b" stroke-width="1.8"/>
+      <text x="60" y="98.5" text-anchor="middle" font-family="ui-monospace,monospace" font-size="5" fill="#146b4b">keep</text>
+      <!-- unsure -> escalate (right, expensive) -->
+      <path d="M72 63 L88 63" stroke="#a8503c" stroke-width="1.7"/>
+      <circle cx="94" cy="63" r="5" fill="none" stroke="#7d3826" stroke-width="1.8"/>
+      <text x="60" y="114" text-anchor="middle" font-family="ui-monospace,monospace" font-size="6.6" fill="#4d3f30" letter-spacing="1.1">v6 · CASCADE</text>
+    </svg>
+    <div>
+      <div class="kick">the cascade &amp; the confidence trap · v6</div>
+      <h1 class="mh">THE CASCADE</h1>
+      <p class="lede"><a href="https://davidwise01.github.io/transformer-silo-v5/">v5</a> needed a regime <b>cue</b> to route. v6 asks: skip it. Run <b>Dave's cheap silo first</b>; escalate to the plain expert <b>only when the silo is unsure</b> — its own confidence is the router, <code>no cue</code>. Does it work? <b>Only when the silo is calibrated</b> — uncertain exactly when it's wrong. Two tasks prove the point: when it holds, you route the hard cases to plain <b>for free</b>; when it doesn't, the silo is <b>confidently wrong</b> and the cascade is blind.</p>
+    </div>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="how">
+  <div class="eyebrow">The mechanism</div>
+  <h2 class="sec">Cheap first, escalate only when unsure</h2>
+  <p class="sub">Every example runs the cheap silo (<b>K²=16</b> attention pairs). If the silo's top-class probability clears a threshold <b>τ</b>, keep its answer. If not, escalate to the order-aware plain expert (<b>+N²=64</b> pairs). The routing signal is the silo's <i>own confidence</i> — no regime cue, no learned router. The catch: confidence only tells you when to escalate <b>if the silo is uncertain on the examples it gets wrong.</b></p>
+  <div class="route-wrap">
+    <svg viewBox="0 0 700 176" role="img" aria-label="Cascade: silo first, confidence gate, keep or escalate">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#867458"/></marker></defs>
+      <rect x="20" y="66" width="120" height="44" rx="9" fill="#fff" stroke="#b85c1f" stroke-width="1.6"/>
+      <text x="80" y="84" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#8a4315">input</text>
+      <text x="80" y="99" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#867458">no cue</text>
+      <line x1="140" y1="88" x2="188" y2="88" stroke="#867458" stroke-width="1.6" marker-end="url(#ar)"/>
+      <rect x="190" y="64" width="122" height="48" rx="9" fill="#fff" stroke="#1f8f66" stroke-width="1.6"/>
+      <text x="251" y="84" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#146b4b">CHEAP SILO</text>
+      <text x="251" y="99" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#867458">K²=16 pairs</text>
+      <line x1="312" y1="88" x2="356" y2="88" stroke="#867458" stroke-width="1.6" marker-end="url(#ar)"/>
+      <path d="M410 62 L452 88 L410 114 L368 88 Z" fill="color-mix(in srgb,#b85c1f 10%,#fff)" stroke="#b85c1f" stroke-width="1.8"/>
+      <text x="410" y="84" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11" font-weight="700" fill="#8a4315">conf ≥ τ ?</text>
+      <text x="410" y="98" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#867458">sure?</text>
+      <path d="M410 114 L410 150" fill="none" stroke="#1f8f66" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="424" y="136" font-family="ui-monospace,monospace" font-size="10" font-weight="700" fill="#146b4b">yes · keep</text>
+      <rect x="330" y="150" width="160" height="20" rx="6" fill="#fff" stroke="#1f8f66" stroke-width="1.4"/>
+      <text x="410" y="164" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#146b4b">done · 16 pairs total</text>
+      <path d="M452 88 L516 88" fill="none" stroke="#a8503c" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="484" y="80" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" font-weight="700" fill="#7d3826">no · escalate</text>
+      <rect x="520" y="64" width="158" height="48" rx="9" fill="#fff" stroke="#a8503c" stroke-width="1.6"/>
+      <text x="599" y="84" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#7d3826">PLAIN EXPERT</text>
+      <text x="599" y="99" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#867458">+N²=64 → 80 total</text>
+    </svg>
+  </div>
+</section>
+
+<section id="results">
+  <div class="eyebrow">The held-out results · seed 0</div>
+  <h2 class="sec">Same cascade, two tasks — calibration decides</h2>
+  <p class="sub">Both tasks are <b>cue-free</b> and differ only in whether the hard regime is <b>legible in the content</b>. Read each card: the three accuracy bars (silo alone / plain alone / the cascade), the acc-vs-compute curve (the cascade swept over τ, between the silo and plain points), and the two diagnostics — <b>ECE</b> (miscalibration; lower is better) and <b>conf-AUC</b> (does confidence predict correctness; 0.5 = blind).</p>
+  <div class="two" id="cards"></div>
+  <div class="verdict" id="verdict"></div>
+</section>
+
+<section id="calib">
+  <div class="eyebrow">Reading the diagnostics</div>
+  <h2 class="sec">Why calibration is the whole game</h2>
+  <div class="two">
+    <div class="card">
+      <h3>ECE — expected calibration error</h3>
+      <p>Average gap between how <i>confident</i> the silo is and how <i>often it's right</i>, over confidence bins. A calibrated model has <b>ECE ≈ 0</b>. The entangled silo (<b>0.12</b>) is <b>confidently wrong</b> on the order examples — high confidence, low accuracy. The telegraphed silo (<b>0.05</b>) knows what it doesn't know.</p>
+    </div>
+    <div class="card">
+      <h3>conf-AUC — does confidence predict correctness</h3>
+      <p>AUROC of the silo's confidence as a detector of "this answer is right." <b>0.5 = blind</b> (confidence tells you nothing). Entangled <b>0.59</b> is near-blind; telegraphed <b>0.90</b> ranks right-above-wrong. A cascade routes on this number — so it inherits exactly the silo's (mis)calibration.</p>
+    </div>
+  </div>
+</section>
+
+<section id="honesty">
+  <div class="eyebrow">The colophon</div>
+  <h2 class="sec">What's real — and what it isn't</h2>
+  <div class="two">
+    <div class="card">
+      <h3>What's real</h3>
+      <p>Both experts are genuinely trained from scratch (numpy Adam); <code>selftest.py</code> <b>gradient-checks</b> the hand-written backprop (&lt; 1e-5) and asserts the core finding — the telegraphed silo really is better-calibrated (AUC 0.90 vs 0.59) and the cue-free cascade really closes <b>~100%</b> of the silo→plain gap at <b>29% less</b> compute than plain. Reproducible at seed 0 with <code>python train.py</code>.</p>
+    </div>
+    <div class="card sig">
+      <h3>What it isn't</h3>
+      <p>A <b>constructed contrast</b>, not a claim about real data — the two tasks are built to isolate calibration; real workloads sit somewhere between. It is <b>not</b> "cascades beat routers": the cue-free cascade only matches plain <i>when the regime is legible in the content</i>. When it isn't (entangled), <b>no</b> cue-free method helps — the honest sequel to <a href="https://davidwise01.github.io/transformer-silo-v5/">v5</a>'s catch. Tiny models, one seed, synthetic.</p>
+    </div>
+  </div>
+  <div class="src">
+    SOURCE · <a href="https://github.com/DavidWise01/transformer-silo-v6">github.com/DavidWise01/transformer-silo-v6</a> · <code>model.py</code> (encoder + two experts + cascade + ECE/AUC, gradient-checked) · <code>tasks.py</code> (entangled + telegraphed, cue-free) · <code>train.py</code> → results.json · <code>selftest.py</code>. The hexalogy: build (v1) · measure (v2) · train one silo (v3) · two in parallel (v4) · route with a cue (v5) · route on confidence (v6).
+  </div>
+  <div class="backbar">
+    <a href="https://github.com/DavidWise01/transformer-silo-v6">⧉ the code (GitHub)</a>
+    <a href="https://davidwise01.github.io/transformer-silo/">⌗ v1</a>
+    <a href="https://davidwise01.github.io/transformer-silo-v2/">↗ v2</a>
+    <a href="https://davidwise01.github.io/transformer-silo-v3/">▲ v3</a>
+    <a href="https://davidwise01.github.io/transformer-silo-v4/">◆ v4</a>
+    <a href="https://davidwise01.github.io/transformer-silo-v5/">◇ v5</a>
+    <a href="https://davidwise01.github.io/ud0/">⌂ ud0</a>
+  </div>
+</section>
+
+<footer>
+  TRANSFORMER SILO v6 · the cascade &amp; the confidence trap · David Lee Wise / ROOT0 / TriPod LLC · CC-BY-ND-4.0<br>
+  confidence ≠ competence · a cascade routes on the cheap model's uncertainty · which only helps when it's calibrated
+</footer>
+</main>
+
+<script>
+var RESULTS = {
+  "config": {"D":6,"G":4,"N":8,"K":4,"H":16,"epochs":250,"seed":0,"silo_pairs":16,"plain_pairs":64,"n_train":1200,"n_test":600},
+  "tasks": {
+    "telegraphed": {
+      "label":"TELEGRAPHED", "kind":"regime legible in content", "outcome":"win",
+      "desc":"Bag examples have a CLEAR content plurality (silo confident + right); order examples have FLAT content (a tie), so the silo is genuinely unsure — exactly when it can't read the first token.",
+      "chance":0.25, "silo":0.625, "plain":0.9233, "gap":0.2983, "recovery":0.995,
+      "ece":0.0506, "auc":0.8979,
+      "op":{"tau":0.45,"acc":0.9217,"pairs":45.3,"esc_ord":0.902,"esc_bag":0.0},
+      "curve":[[16.0,0.625],[16.4,0.632],[17.6,0.66],[19.9,0.70],[23.4,0.75],[28.1,0.80],[33.8,0.852],[39.6,0.893],[45.3,0.9217],[50.7,0.923],[55.9,0.923],[61.2,0.923],[66.5,0.9233],[71.8,0.9233],[77.1,0.9233],[80.0,0.9233]]
+    },
+    "entangled": {
+      "label":"ENTANGLED", "kind":"regime hidden from content", "outcome":"noh",
+      "desc":"Bag and order examples are drawn from the SAME content distribution, so the silo sees identical inputs for both — and on an order example it confidently emits the plurality. Confidently wrong.",
+      "chance":0.25, "silo":0.6767, "plain":0.6883, "gap":0.0117, "recovery":0.286,
+      "ece":0.1185, "auc":0.5874,
+      "op":{"tau":0.35,"acc":0.68,"pairs":18.5,"esc_ord":0.033,"esc_bag":0.044},
+      "curve":[[16.0,0.677],[18.5,0.68],[22.0,0.679],[27.0,0.681],[33.0,0.683],[40.0,0.684],[48.0,0.686],[56.0,0.687],[64.0,0.688],[72.0,0.688],[80.0,0.6883]]
+    }
+  },
+  "verdict":""
+};
+RESULTS.verdict = "Same confidence-gated cascade, two cue-free tasks, opposite outcomes — and the difference is CALIBRATION. TELEGRAPHED: the silo is calibrated (ECE 0.05, conf-vs-correct AUC 0.90 — unsure exactly when it's wrong), so its confidence routes the hard regime to plain with NO cue; it closes 100% of the silo→plain gap (0.62→0.92) at 45 vs 64 attention pairs (29% cheaper), escalating 90% of order but 0% of bag. ENTANGLED: plain 0.69 is barely above silo 0.68 — when the regime is illegible in the content, NEITHER expert can do the hard half cue-free, so the cascade has nothing better to escalate to, and the silo's confidence is near-blind anyway (ECE 0.12, AUC 0.59). The lesson: a confidence cascade doesn't detect the hard regime — it detects the cheap model's own UNCERTAINTY, which only helps when that lines up with its errors. This is the honest sequel to v5's catch: if the regime is detectable in the CONTENT you need neither a cue token nor a learned router — a confidence cascade suffices; if it isn't, nothing does. Constructed contrast, tiny models, synthetic — a demonstration of WHEN cascades work, not a benchmark.";
+(function(){
+"use strict";
+var R = RESULTS, c = R.config, CH = 0.25;
+function pc(x){ return (x*100).toFixed(1); }
+
+function bar(cls, lab, acc, pairs){
+  return '<div class="arm '+cls+'"><span class="lab">'+lab+'</span>'+
+    '<span class="tr"><span class="fl" style="width:'+pc(acc)+'%"></span><span class="chance" style="left:'+(CH*100)+'%"></span></span>'+
+    '<span class="v">'+pc(acc)+'<span class="u">%</span> · '+pairs+'<span class="u">p</span></span></div>';
+}
+function curveSVG(t){
+  var W=300,Hh=118,pad=24, pts=t.curve;
+  var xmin=16,xmax=80,ymin=0.25,ymax=1.0;
+  function X(p){ return pad + (p-xmin)/(xmax-xmin)*(W-pad-8); }
+  function Y(a){ return Hh-18 - (a-ymin)/(ymax-ymin)*(Hh-18-8); }
+  var poly = pts.map(function(p){return X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1);}).join(' ');
+  var col = t.outcome==="win" ? "#b85c1f" : "#a8503c";
+  // plain accuracy guide line
+  var yp = Y(t.plain).toFixed(1);
+  var g='<svg viewBox="0 0 '+W+' '+Hh+'">';
+  g+='<line x1="'+pad+'" y1="'+yp+'" x2="'+(W-8)+'" y2="'+yp+'" stroke="#5b6b78" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>';
+  g+='<text x="'+(W-10)+'" y="'+(yp-3)+'" text-anchor="end" font-family="ui-monospace" font-size="8" fill="#3c4a55">plain '+pc(t.plain)+'%</text>';
+  g+='<polyline points="'+poly+'" fill="none" stroke="'+col+'" stroke-width="2"/>';
+  // silo-only point (left) and operating point
+  g+='<circle cx="'+X(16).toFixed(1)+'" cy="'+Y(t.silo).toFixed(1)+'" r="3.2" fill="#1f8f66"/>';
+  g+='<text x="'+(X(16)+5).toFixed(1)+'" y="'+(Y(t.silo)+11).toFixed(1)+'" font-family="ui-monospace" font-size="8" fill="#146b4b">silo</text>';
+  g+='<circle cx="'+X(t.op.pairs).toFixed(1)+'" cy="'+Y(t.op.acc).toFixed(1)+'" r="4" fill="'+col+'" stroke="#fff" stroke-width="1.3"/>';
+  g+='<text x="'+X(t.op.pairs).toFixed(1)+'" y="'+(Y(t.op.acc)-7).toFixed(1)+'" text-anchor="middle" font-family="ui-monospace" font-size="8" font-weight="700" fill="'+col+'">'+t.op.pairs+'p</text>';
+  // axes labels
+  g+='<text x="'+pad+'" y="'+(Hh-4)+'" font-family="ui-monospace" font-size="8" fill="#867458">16</text>';
+  g+='<text x="'+(W-8)+'" y="'+(Hh-4)+'" text-anchor="end" font-family="ui-monospace" font-size="8" fill="#867458">80 pairs →</text>';
+  g+='</svg>';
+  return g;
+}
+function chip(cls, k, val, note){
+  return '<div class="chip '+cls+'"><div class="k">'+k+'</div><div class="val">'+val+'</div><div class="note">'+note+'</div></div>';
+}
+function card(key){
+  var t=R.tasks[key], oc=t.outcome;
+  var eceCls = t.ece < 0.08 ? "good":"bad", aucCls = t.auc > 0.8 ? "good":"bad";
+  var sum = oc==="win"
+    ? 'the cue-free cascade closes <b>'+(t.recovery*100).toFixed(0)+'%</b> of the silo→plain gap ('+pc(t.silo)+'%→'+pc(t.op.acc)+'%) at <b>'+t.op.pairs+' pairs</b> vs plain’s '+c.plain_pairs+' — '+((1-t.op.pairs/c.plain_pairs)*100).toFixed(0)+'% cheaper. It escalates <b>'+(t.op.esc_ord*100).toFixed(0)+'% of order</b> but '+(t.op.esc_bag*100).toFixed(0)+'% of bag: the confidence found the hard regime, no cue.'
+    : 'plain ('+pc(t.plain)+'%) barely beats silo ('+pc(t.silo)+'%) — gap <b>'+(t.gap*100).toFixed(0)+'%</b>. With the regime hidden, neither expert can do the hard half cue-free, so there is <b>nothing better to escalate to</b>, and confidence is near-blind. The cascade correctly stays cheap but can’t manufacture accuracy.';
+  return '<div class="tcard '+oc+'"><div class="thd"><span class="nm">'+t.label+'</span>'+
+    '<span style="font-family:var(--mono);font-size:10px;color:var(--dim)">'+t.kind+'</span>'+
+    '<span class="badge '+oc+'">'+(oc==="win"?"cue-free win":"no headroom")+'</span></div>'+
+    '<div class="tdesc">'+t.desc+'</div>'+
+    '<div class="tbody">'+
+      '<div class="arms">'+bar("silo","silo only",t.silo,16)+bar("plain","plain only",t.plain,64)+bar("casc","the cascade",t.op.acc,t.op.pairs)+'</div>'+
+      '<div class="curve">'+curveSVG(t)+'</div>'+
+      '<div class="diag">'+chip(eceCls,"silo ECE",t.ece.toFixed(2),eceCls==="good"?"calibrated":"confidently wrong")+
+        chip(aucCls,"conf-AUC",t.auc.toFixed(2),aucCls==="good"?"predicts correctness":"near-blind (0.5)")+'</div>'+
+    '</div>'+
+    '<div class="tsum">'+sum+'</div></div>';
+}
+document.getElementById("cards").innerHTML = card("telegraphed") + card("entangled");
+document.getElementById("verdict").textContent = R.verdict;
+})();
+</script>
+</body>
+</html>

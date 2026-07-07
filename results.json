@@ -1,0 +1,566 @@
+{
+  "config": {
+    "D": 6,
+    "G": 4,
+    "N": 8,
+    "K": 4,
+    "H": 16,
+    "epochs": 250,
+    "seed": 0,
+    "silo_pairs": 16,
+    "plain_pairs": 64,
+    "n_train": 1200,
+    "n_test": 600
+  },
+  "tasks": {
+    "entangled": {
+      "task": "entangled",
+      "chance": 0.25,
+      "silo_only": {
+        "acc": 0.6767,
+        "pairs": 16
+      },
+      "plain_only": {
+        "acc": 0.6883,
+        "pairs": 64
+      },
+      "gap": 0.0117,
+      "recovery_frac": 0.286,
+      "silo_ece": 0.1185,
+      "silo_conf_auc": 0.5874,
+      "operating_point": {
+        "tau": 0.35,
+        "acc": 0.68,
+        "pairs": 18.5,
+        "esc": 0.038,
+        "esc_bag": 0.044,
+        "esc_ord": 0.033
+      },
+      "curve": [
+        {
+          "tau": 0.25,
+          "acc": 0.6767,
+          "pairs": 16.0,
+          "esc": 0.0,
+          "esc_bag": 0.0,
+          "esc_ord": 0.0
+        },
+        {
+          "tau": 0.275,
+          "acc": 0.6767,
+          "pairs": 16.0,
+          "esc": 0.0,
+          "esc_bag": 0.0,
+          "esc_ord": 0.0
+        },
+        {
+          "tau": 0.3,
+          "acc": 0.6783,
+          "pairs": 16.1,
+          "esc": 0.002,
+          "esc_bag": 0.003,
+          "esc_ord": 0.0
+        },
+        {
+          "tau": 0.325,
+          "acc": 0.675,
+          "pairs": 16.9,
+          "esc": 0.013,
+          "esc_bag": 0.02,
+          "esc_ord": 0.007
+        },
+        {
+          "tau": 0.35,
+          "acc": 0.68,
+          "pairs": 18.5,
+          "esc": 0.038,
+          "esc_bag": 0.044,
+          "esc_ord": 0.033
+        },
+        {
+          "tau": 0.375,
+          "acc": 0.6833,
+          "pairs": 20.3,
+          "esc": 0.067,
+          "esc_bag": 0.071,
+          "esc_ord": 0.062
+        },
+        {
+          "tau": 0.4,
+          "acc": 0.6883,
+          "pairs": 22.1,
+          "esc": 0.095,
+          "esc_bag": 0.098,
+          "esc_ord": 0.092
+        },
+        {
+          "tau": 0.425,
+          "acc": 0.6733,
+          "pairs": 24.5,
+          "esc": 0.133,
+          "esc_bag": 0.153,
+          "esc_ord": 0.115
+        },
+        {
+          "tau": 0.45,
+          "acc": 0.685,
+          "pairs": 27.6,
+          "esc": 0.182,
+          "esc_bag": 0.18,
+          "esc_ord": 0.184
+        },
+        {
+          "tau": 0.475,
+          "acc": 0.6817,
+          "pairs": 30.3,
+          "esc": 0.223,
+          "esc_bag": 0.217,
+          "esc_ord": 0.23
+        },
+        {
+          "tau": 0.5,
+          "acc": 0.6867,
+          "pairs": 34.5,
+          "esc": 0.288,
+          "esc_bag": 0.271,
+          "esc_ord": 0.305
+        },
+        {
+          "tau": 0.525,
+          "acc": 0.6983,
+          "pairs": 38.3,
+          "esc": 0.348,
+          "esc_bag": 0.325,
+          "esc_ord": 0.37
+        },
+        {
+          "tau": 0.55,
+          "acc": 0.7117,
+          "pairs": 40.5,
+          "esc": 0.383,
+          "esc_bag": 0.349,
+          "esc_ord": 0.416
+        },
+        {
+          "tau": 0.575,
+          "acc": 0.7133,
+          "pairs": 43.4,
+          "esc": 0.428,
+          "esc_bag": 0.393,
+          "esc_ord": 0.462
+        },
+        {
+          "tau": 0.6,
+          "acc": 0.7067,
+          "pairs": 46.4,
+          "esc": 0.475,
+          "esc_bag": 0.441,
+          "esc_ord": 0.508
+        },
+        {
+          "tau": 0.625,
+          "acc": 0.705,
+          "pairs": 49.1,
+          "esc": 0.517,
+          "esc_bag": 0.481,
+          "esc_ord": 0.551
+        },
+        {
+          "tau": 0.65,
+          "acc": 0.71,
+          "pairs": 51.9,
+          "esc": 0.562,
+          "esc_bag": 0.529,
+          "esc_ord": 0.593
+        },
+        {
+          "tau": 0.675,
+          "acc": 0.71,
+          "pairs": 54.1,
+          "esc": 0.595,
+          "esc_bag": 0.566,
+          "esc_ord": 0.623
+        },
+        {
+          "tau": 0.7,
+          "acc": 0.705,
+          "pairs": 56.5,
+          "esc": 0.633,
+          "esc_bag": 0.62,
+          "esc_ord": 0.646
+        },
+        {
+          "tau": 0.725,
+          "acc": 0.705,
+          "pairs": 58.5,
+          "esc": 0.663,
+          "esc_bag": 0.651,
+          "esc_ord": 0.675
+        },
+        {
+          "tau": 0.75,
+          "acc": 0.7017,
+          "pairs": 60.9,
+          "esc": 0.702,
+          "esc_bag": 0.695,
+          "esc_ord": 0.708
+        },
+        {
+          "tau": 0.775,
+          "acc": 0.6967,
+          "pairs": 64.9,
+          "esc": 0.763,
+          "esc_bag": 0.769,
+          "esc_ord": 0.757
+        },
+        {
+          "tau": 0.8,
+          "acc": 0.69,
+          "pairs": 68.2,
+          "esc": 0.815,
+          "esc_bag": 0.834,
+          "esc_ord": 0.797
+        },
+        {
+          "tau": 0.825,
+          "acc": 0.6917,
+          "pairs": 70.2,
+          "esc": 0.847,
+          "esc_bag": 0.858,
+          "esc_ord": 0.836
+        },
+        {
+          "tau": 0.85,
+          "acc": 0.6883,
+          "pairs": 72.0,
+          "esc": 0.875,
+          "esc_bag": 0.878,
+          "esc_ord": 0.872
+        },
+        {
+          "tau": 0.875,
+          "acc": 0.6867,
+          "pairs": 73.4,
+          "esc": 0.897,
+          "esc_bag": 0.902,
+          "esc_ord": 0.892
+        },
+        {
+          "tau": 0.9,
+          "acc": 0.6867,
+          "pairs": 74.9,
+          "esc": 0.92,
+          "esc_bag": 0.929,
+          "esc_ord": 0.911
+        },
+        {
+          "tau": 0.925,
+          "acc": 0.6883,
+          "pairs": 76.6,
+          "esc": 0.947,
+          "esc_bag": 0.956,
+          "esc_ord": 0.938
+        },
+        {
+          "tau": 0.95,
+          "acc": 0.6883,
+          "pairs": 78.3,
+          "esc": 0.973,
+          "esc_bag": 0.976,
+          "esc_ord": 0.97
+        },
+        {
+          "tau": 0.975,
+          "acc": 0.6883,
+          "pairs": 79.9,
+          "esc": 0.998,
+          "esc_bag": 1.0,
+          "esc_ord": 0.997
+        },
+        {
+          "tau": 1.0,
+          "acc": 0.6883,
+          "pairs": 80.0,
+          "esc": 1.0,
+          "esc_bag": 1.0,
+          "esc_ord": 1.0
+        }
+      ]
+    },
+    "telegraphed": {
+      "task": "telegraphed",
+      "chance": 0.25,
+      "silo_only": {
+        "acc": 0.625,
+        "pairs": 16
+      },
+      "plain_only": {
+        "acc": 0.9233,
+        "pairs": 64
+      },
+      "gap": 0.2983,
+      "recovery_frac": 0.995,
+      "silo_ece": 0.0506,
+      "silo_conf_auc": 0.8979,
+      "operating_point": {
+        "tau": 0.45,
+        "acc": 0.9217,
+        "pairs": 45.3,
+        "esc": 0.458,
+        "esc_bag": 0.0,
+        "esc_ord": 0.902
+      },
+      "curve": [
+        {
+          "tau": 0.25,
+          "acc": 0.625,
+          "pairs": 16.0,
+          "esc": 0.0,
+          "esc_bag": 0.0,
+          "esc_ord": 0.0
+        },
+        {
+          "tau": 0.275,
+          "acc": 0.6383,
+          "pairs": 17.7,
+          "esc": 0.027,
+          "esc_bag": 0.0,
+          "esc_ord": 0.052
+        },
+        {
+          "tau": 0.3,
+          "acc": 0.6833,
+          "pairs": 21.7,
+          "esc": 0.088,
+          "esc_bag": 0.0,
+          "esc_ord": 0.174
+        },
+        {
+          "tau": 0.325,
+          "acc": 0.7583,
+          "pairs": 28.7,
+          "esc": 0.198,
+          "esc_bag": 0.0,
+          "esc_ord": 0.39
+        },
+        {
+          "tau": 0.35,
+          "acc": 0.8183,
+          "pairs": 34.2,
+          "esc": 0.285,
+          "esc_bag": 0.0,
+          "esc_ord": 0.561
+        },
+        {
+          "tau": 0.375,
+          "acc": 0.8567,
+          "pairs": 38.3,
+          "esc": 0.348,
+          "esc_bag": 0.0,
+          "esc_ord": 0.685
+        },
+        {
+          "tau": 0.4,
+          "acc": 0.88,
+          "pairs": 41.4,
+          "esc": 0.397,
+          "esc_bag": 0.0,
+          "esc_ord": 0.78
+        },
+        {
+          "tau": 0.425,
+          "acc": 0.9133,
+          "pairs": 44.2,
+          "esc": 0.44,
+          "esc_bag": 0.0,
+          "esc_ord": 0.866
+        },
+        {
+          "tau": 0.45,
+          "acc": 0.9217,
+          "pairs": 45.3,
+          "esc": 0.458,
+          "esc_bag": 0.0,
+          "esc_ord": 0.902
+        },
+        {
+          "tau": 0.475,
+          "acc": 0.9267,
+          "pairs": 46.2,
+          "esc": 0.472,
+          "esc_bag": 0.0,
+          "esc_ord": 0.928
+        },
+        {
+          "tau": 0.5,
+          "acc": 0.935,
+          "pairs": 47.4,
+          "esc": 0.49,
+          "esc_bag": 0.0,
+          "esc_ord": 0.964
+        },
+        {
+          "tau": 0.525,
+          "acc": 0.9367,
+          "pairs": 47.6,
+          "esc": 0.493,
+          "esc_bag": 0.0,
+          "esc_ord": 0.97
+        },
+        {
+          "tau": 0.55,
+          "acc": 0.9383,
+          "pairs": 47.9,
+          "esc": 0.498,
+          "esc_bag": 0.0,
+          "esc_ord": 0.98
+        },
+        {
+          "tau": 0.575,
+          "acc": 0.9433,
+          "pairs": 48.3,
+          "esc": 0.505,
+          "esc_bag": 0.0,
+          "esc_ord": 0.993
+        },
+        {
+          "tau": 0.6,
+          "acc": 0.945,
+          "pairs": 48.5,
+          "esc": 0.508,
+          "esc_bag": 0.0,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.625,
+          "acc": 0.945,
+          "pairs": 48.6,
+          "esc": 0.51,
+          "esc_bag": 0.003,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.65,
+          "acc": 0.945,
+          "pairs": 48.7,
+          "esc": 0.512,
+          "esc_bag": 0.007,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.675,
+          "acc": 0.945,
+          "pairs": 48.7,
+          "esc": 0.512,
+          "esc_bag": 0.007,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.7,
+          "acc": 0.945,
+          "pairs": 48.7,
+          "esc": 0.512,
+          "esc_bag": 0.007,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.725,
+          "acc": 0.945,
+          "pairs": 48.7,
+          "esc": 0.512,
+          "esc_bag": 0.007,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.75,
+          "acc": 0.9433,
+          "pairs": 48.9,
+          "esc": 0.513,
+          "esc_bag": 0.01,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.775,
+          "acc": 0.9433,
+          "pairs": 49.1,
+          "esc": 0.517,
+          "esc_bag": 0.017,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.8,
+          "acc": 0.945,
+          "pairs": 49.2,
+          "esc": 0.518,
+          "esc_bag": 0.02,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.825,
+          "acc": 0.945,
+          "pairs": 49.2,
+          "esc": 0.518,
+          "esc_bag": 0.02,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.85,
+          "acc": 0.945,
+          "pairs": 49.2,
+          "esc": 0.518,
+          "esc_bag": 0.02,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.875,
+          "acc": 0.9433,
+          "pairs": 49.4,
+          "esc": 0.522,
+          "esc_bag": 0.027,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.9,
+          "acc": 0.94,
+          "pairs": 49.7,
+          "esc": 0.527,
+          "esc_bag": 0.037,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.925,
+          "acc": 0.9367,
+          "pairs": 50.1,
+          "esc": 0.533,
+          "esc_bag": 0.051,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.95,
+          "acc": 0.935,
+          "pairs": 50.3,
+          "esc": 0.537,
+          "esc_bag": 0.058,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 0.975,
+          "acc": 0.9317,
+          "pairs": 51.0,
+          "esc": 0.547,
+          "esc_bag": 0.078,
+          "esc_ord": 1.0
+        },
+        {
+          "tau": 1.0,
+          "acc": 0.9233,
+          "pairs": 80.0,
+          "esc": 1.0,
+          "esc_bag": 1.0,
+          "esc_ord": 1.0
+        }
+      ]
+    }
+  },
+  "verdict": "Same confidence-gated cascade, two cue-free tasks, opposite outcomes -- and the difference is CALIBRATION. TELEGRAPHED: CUE-FREE CASCADE WORKS -- the silo is CALIBRATED (ECE 0.05, conf-vs-correct AUC 0.90: it is uncertain exactly when it is wrong), so its confidence routes the hard regime to plain with NO cue. It closes 100% of the silo->plain gap (0.62->0.92, plain 0.92) at 45.3 avg attention pairs vs plain's 64 -- 29% cheaper -- escalating 90% of order but 0% of bag. ENTANGLED: NO HEADROOM -- plain 0.69 is barely above silo 0.68 (gap 1%). When the regime is illegible in the content, NEITHER expert can do the hard half cue-free, so a cascade has nothing better to escalate to -- and the silo's confidence is weak anyway (ECE 0.12, conf-vs-correct AUC 0.59). The cascade correctly stays cheap (~18.5 pairs) but cannot manufacture accuracy neither expert has. The lesson: a confidence cascade does not detect the hard regime -- it detects the cheap model's own UNCERTAINTY, which only helps when that uncertainty lines up with its errors (low ECE, AUC >> 0.5). And calibration here tracks LEGIBILITY: when the regime shows up in the content (telegraphed), the silo is calibrated AND a capable fallback exists, so you get cue-free routing for free; when it doesn't (entangled), the silo is confidently wrong AND nothing better exists to route to. This is the honest sequel to v5's catch 'the regime must be detectable in the input': if it is detectable in the CONTENT, you need neither a cue token nor a learned router -- a confidence cascade suffices; if it isn't, nothing does. Constructed contrast, tiny models, synthetic -- a demonstration of WHEN cascades work, not a benchmark."
+}
