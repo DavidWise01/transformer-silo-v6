@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TRANSFORMER SILO v6 · the cascade &amp; the confidence trap · ROOT0</title>
-<meta name="description" content="transformer-silo v6 by David Lee Wise / ROOT0: a CUE-FREE confidence-gated cascade — run the cheap silo first, escalate to the plain expert only when the silo is unsure. v5 needed a regime cue to route; v6 asks whether the silo's own confidence can route instead. Answer: only when the silo is CALIBRATED. Tested on two tasks. TELEGRAPHED (regime legible in content): silo calibrated (ECE 0.05, conf-AUC 0.90), the cascade closes 100% of the silo→plain gap (0.62→0.92) at 45 vs 64 attention pairs — cue-free routing, 29% cheaper. ENTANGLED (regime hidden): silo confidently wrong (ECE 0.12, AUC 0.59), plain barely beats silo — no headroom, nothing to route to. The lesson: a confidence cascade detects the cheap model's own uncertainty, which only helps when it lines up with its errors.">
+<meta name="description" content="transformer-silo v6 by David Lee Wise / ROOT0: a CUE-FREE confidence-gated cascade — run the cheap silo first, escalate to the plain expert only when the silo is unsure. v5 needed a regime cue to route; v6 asks whether the silo's own confidence can route instead. Answer: only when the silo is CALIBRATED. Tested on two tasks. TELEGRAPHED (regime legible in content): silo calibrated (ECE 0.05, conf-AUC 0.90), the cascade closes ~100% of the silo→plain gap (0.62→0.92) at 45 vs 64 attention pairs — cue-free routing, 29% cheaper. ENTANGLED (regime hidden): silo confidently wrong (ECE 0.12, AUC 0.59), plain barely beats silo — no real headroom, only a marginal noisy ensemble bump. The lesson: a confidence cascade detects the cheap model's own uncertainty, which only helps when it lines up with its errors.">
 <meta name="theme-color" content="#b85c1f">
 <meta property="og:type" content="website">
 <meta property="og:title" content="TRANSFORMER SILO v6 · the cascade &amp; the confidence trap">
-<meta property="og:description" content="A cue-free confidence cascade: cheap silo first, escalate when unsure. It works ONLY when the silo is calibrated. Telegraphed task: closes 100% of the silo→plain gap at 29% less compute, no cue. Entangled task: silo confidently wrong, plain barely beats it — nothing to route to. Confidence ≠ competence; calibration decides.">
+<meta property="og:description" content="A cue-free confidence cascade: cheap silo first, escalate when unsure. It works ONLY when the silo is calibrated. Telegraphed task: closes ~100% of the silo→plain gap at 29% less compute, no cue. Entangled task: silo confidently wrong, plain barely beats it — no real headroom. Confidence ≠ competence; calibration decides.">
 <meta property="og:url" content="https://davidwise01.github.io/transformer-silo-v6/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TRANSFORMER SILO v6 · the cascade &amp; the confidence trap">
-<meta name="twitter:description" content="Cheap silo first, escalate when unsure — cue-free. Works only when the silo is calibrated: telegraphed closes 100% of the gap at 29% less compute; entangled is blind (confidently wrong). Calibration decides.">
+<meta name="twitter:description" content="Cheap silo first, escalate when unsure — cue-free. Works only when the silo is calibrated: telegraphed closes ~100% of the gap at 29% less compute; entangled is blind (confidently wrong, no real headroom). Calibration decides.">
 <link rel="canonical" href="https://davidwise01.github.io/transformer-silo-v6/">
 <style>
 :root{

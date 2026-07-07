@@ -157,5 +157,5 @@ if __name__ == "__main__":
             print(f"  CASCADE op: acc={op['acc']:.3f} @ {op['pairs']} pairs "
                   f"(closes {e['recovery_frac']*100:.0f}% of gap; esc order {op['esc_ord']*100:.0f}% / bag {op['esc_bag']*100:.0f}%)  -> CUE-FREE WIN")
         else:
-            print(f"  CASCADE: no headroom (plain ~ silo) -> nothing to route to; stays cheap")
+            print(f"  CASCADE: no real headroom (plain ~ silo) -> only a marginal ensemble bump (peak {e['peak']['acc']:.3f} @ {e['peak']['pairs']}p)")
     print(f"\n{res['verdict']}\n[{time.time()-t0:.1f}s]")
