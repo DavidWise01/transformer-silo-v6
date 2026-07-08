@@ -1,0 +1,9 @@
+ROOT0-DLW-CHAIN-v1
+index : 328
+slug  : transformer-silo-v6
+seal  : 4d9c7228df99f086d2dde9a2c09877c98a8cee4b27b05c20c10c14ca410d9f76
+prev  : 8443aabf70875ca00671c7e46d750691e173bc7966cec9de5c41ddd14fed46ab
+link  : fed54141edd0f831a36f35b1bcaf1938ab4b0fc4e40c8ff2367091fd8565f015
+head  : 3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90
+
+— the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
